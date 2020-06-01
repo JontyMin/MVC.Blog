@@ -43,12 +43,13 @@ namespace MVC.Blog.Site.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Login(LoginViewModel model)
+        public  ActionResult Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
                 IUserManager userManager = new UserManager();
-                if (await userManager.Login(model.LoginName, model.LoginPwd))
+                Guid userId;
+                if ( userManager.Login(model.LoginName, model.LoginPwd,out userId))
                 {
                     if (model.RememberMe)
                     {
@@ -57,10 +58,16 @@ namespace MVC.Blog.Site.Controllers
                             Value = model.LoginName,
                             Expires = DateTime.Now.AddDays(7)
                         });
+                        Response.Cookies.Add(new HttpCookie("userId")
+                        {
+                            Value = userId.ToString(),
+                            Expires = DateTime.Now.AddDays(7)
+                        });
                     }
                     else
                     {
                         Session["loginName"] = model.LoginName;
+                        Session["userId"] = userId;
                     }
 
                     return RedirectToAction(nameof(Index));

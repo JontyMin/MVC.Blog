@@ -1,6 +1,8 @@
-﻿namespace MVC.Blog.IDAL
+﻿using MVC.Blog.Model;
+
+namespace MVC.Blog.IDAL
 {
-    public interface ICategoryService
+    public interface ICategoryService:IBaseService<Category>
     {
         
     }

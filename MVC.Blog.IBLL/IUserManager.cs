@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using MVC.Blog.DTO;
 
 namespace MVC.Blog.IBLL
@@ -18,7 +19,7 @@ namespace MVC.Blog.IBLL
         /// <param name="email"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        Task<bool> Login(string email, string password);
+        bool Login(string email, string password, out Guid userId);
         /// <summary>
         /// 修改密码
         /// </summary>

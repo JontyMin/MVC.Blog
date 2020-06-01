@@ -2,7 +2,7 @@
 
 namespace MVC.Blog.IDAL
 {
-    public interface IArticleService:IBaseService<Article>
+    public interface IArticleToCategory:IBaseService<ArticleToCategory>
     {
         
     }

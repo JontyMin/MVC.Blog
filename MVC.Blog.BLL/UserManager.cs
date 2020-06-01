@@ -64,11 +64,20 @@ namespace MVC.Blog.BLL
             }
         }
 
-        public async Task<bool> Login(string email, string password)
+        public bool Login(string email, string password,out Guid userId)
         {
             using (IUserService userService=new UserService())
             {
-                return await userService.GetAll().AnyAsync(x => x.Email == email && x.Password == password);
+                var user = userService.GetAll().FirstOrDefaultAsync(x => x.Email == email && x.Password == password);
+                user.Wait();
+                var data = user.Result;
+                if (data == null)
+                {
+                    userId=new Guid();
+                    return false;
+                }
+                userId = data.Id;
+                return true;
             }
         }
 

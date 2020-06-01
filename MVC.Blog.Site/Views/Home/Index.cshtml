@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "MVC.Blog";
 	var loginName = Session["loginName"] == null ? Response.Cookies["loginName"].Value : Session["loginName"].ToString();
 }
 <h3>@loginName</h3>
