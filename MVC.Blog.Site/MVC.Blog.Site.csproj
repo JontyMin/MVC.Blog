@@ -132,11 +132,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ArticleViewModels\ArticleDetailsViewModel.cs" />
     <Compile Include="Models\ArticleViewModels\CreateCategoryViewModel.cs" />
     <Compile Include="Models\UserViewModels\LoginViewModel.cs" />
     <Compile Include="Models\UserViewModels\RegisterViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Article\CreateArticleViewModel.cs" />
+    <Compile Include="Models\ArticleViewModels\CreateArticleViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -177,6 +178,8 @@
     <Content Include="Views\Article\CreateCategory.cshtml" />
     <Content Include="Views\Article\CategoryList.cshtml" />
     <Content Include="Views\Article\CreateArticle.cshtml" />
+    <Content Include="Views\Article\ArticleList.cshtml" />
+    <Content Include="Views\Article\ArticleEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

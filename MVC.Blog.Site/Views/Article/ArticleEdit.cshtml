@@ -1,0 +1,102 @@
+﻿@model MVC.Blog.DTO.ArticleDto
+
+@{
+	ViewBag.Title = "ArticleEdit";
+}
+
+<h2>ArticleEdit</h2>
+
+<div>
+	<h4>ArticleDto</h4>
+	<hr />
+	<dl class="dl-horizontal">
+		<dt>
+			@Html.DisplayNameFor(model => model.ArticleId)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.ArticleId)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.Title)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.Title)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.Content)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.Content)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.CreateTime)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.CreateTime)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.Email)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.Email)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.GoodCount)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.GoodCount)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.BadCount)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.BadCount)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => model.ImagePath)
+		</dt>
+
+		<dd>
+			@Html.DisplayFor(model => model.ImagePath)
+		</dd>
+		<dt>
+			类别
+		</dt>
+		@foreach (var item in Model.CategoryNames)
+		{
+			<dd class="categoryIds">
+				@item
+			</dd>
+		}
+
+
+	</dl>
+</div>
+<p>
+	@Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+	@Html.ActionLink("Back to List", "ArticleList")
+</p>
+@section header{
+	<style>
+		.categoryIds {
+			float: left;
+			margin: 5px !important;
+			padding: 0px;
+		}
+
+	</style>
+}

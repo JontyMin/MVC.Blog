@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using MVC.Blog.DAL;
 using MVC.Blog.DTO;
@@ -67,9 +68,35 @@ namespace MVC.Blog.BLL
             }
         }
 
-        public Task<List<ArticleDto>> GetAllArticles(Guid userId)
+        public async Task<List<ArticleDto>> GetAllArticles(Guid userId)
         {
-            throw new NotImplementedException();
+            using (var articleService=new ArticleService())
+            {
+                var list = await articleService.GetAll().Include(x=>x.User).Where(x => x.UserId == userId)
+                    .Select(x=>new ArticleDto()
+                {
+                    Title = x.Title,
+                    BadCount = x.BadCount,
+                    GoodCount = x.GoodCount,
+                    Email = x.User.Email,
+                    Content = x.Content,
+                    CreateTime = x.CreateTime,
+                    ArticleId = x.Id,
+                    ImagePath = x.User.ImagePath
+                }).ToListAsync();
+
+                using (IArticleToCategoryService articleToCategoryService = new ArticleToCategoryService())
+                {
+                    foreach (var articleDto in list)
+                    {
+                        var cates = await articleToCategoryService.GetAll().Include(x=>x.Category).Where(x => x.ArticleId == articleDto.ArticleId).ToListAsync();
+                        articleDto.CategoryIds = cates.Select(x => x.CategoryId).ToArray();
+                        articleDto.CategoryNames = cates.Select(x => x.Category.CategoryName).ToArray();
+                    }
+
+                    return list;
+                }
+            }
         }
 
         public Task<List<ArticleDto>> GetAllArticlesByEmail(string email)
@@ -91,7 +118,7 @@ namespace MVC.Blog.BLL
         {
             throw new NotImplementedException();
         }
-
+ 
         public Task RemoveArticle(Guid articleId)
         {
             throw new NotImplementedException();
@@ -100,6 +127,43 @@ namespace MVC.Blog.BLL
         public Task EditArticle(Guid articleId, string title, string content, Guid[] categoryIds)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> ExistsArticle(Guid articleId)
+        {
+            using (IArticleService articleService=new ArticleService())
+            {
+                return await articleService.GetAll().AnyAsync(x => x.Id == articleId);
+            }
+        }
+
+        public async Task<ArticleDto> GetArticleById(Guid articleId)
+        {
+            using (IArticleService articleService = new ArticleService())
+            {
+                var data= await articleService.GetAll().Where(x => x.Id == articleId).Select(x=>new ArticleDto()
+                {
+                    ArticleId = x.Id,
+                    BadCount = x.BadCount,
+                    Title = x.Title,
+                    Content = x.Content,
+                    CreateTime = x.CreateTime,
+                    Email = x.User.Email,
+                    GoodCount = x.GoodCount,
+                    ImagePath = x.User.ImagePath
+
+                }).FirstAsync();
+
+                using (IArticleToCategoryService articleToCategoryService = new ArticleToCategoryService())
+                {
+                    var cates = await articleToCategoryService.GetAll().Include(x => x.Category)
+                        .Where(x => x.ArticleId == data.ArticleId).ToListAsync();
+                    data.CategoryIds = cates.Select(x => x.CategoryId).ToArray();
+                    data.CategoryNames = cates.Select(x => x.Category.CategoryName).ToArray();
+
+                    return data;
+                }
+            }
         }
     }
 }

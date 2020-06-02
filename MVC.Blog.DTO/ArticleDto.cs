@@ -13,6 +13,6 @@ namespace MVC.Blog.DTO
         public int BadCount { get; set; }
         public string ImagePath { get; set; }
         public string[] CategoryNames { get; set; }
-        public string[] CategoryIds { get; set; }
+        public Guid[] CategoryIds { get; set; }
     }
 }

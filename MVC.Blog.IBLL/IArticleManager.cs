@@ -18,5 +18,7 @@ namespace MVC.Blog.IBLL
         Task RemoveArticle(Guid articleId);
         Task EditArticle(Guid articleId, string title, string content, Guid[] categoryIds);
 
+        Task<bool> ExistsArticle(Guid articleId);
+        Task<ArticleDto> GetArticleById(Guid articleId);
     }
 }

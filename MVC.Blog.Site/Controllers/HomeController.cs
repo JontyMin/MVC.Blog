@@ -13,7 +13,8 @@ namespace MVC.Blog.Site.Controllers
 {
     public class HomeController : Controller
     {
-        [BlogAuth]
+        
+        [AllowAnonymous]
         public ActionResult Index()
         {
             return View();

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<MVC.Blog.DTO.ArticleDto>
+
+@{
+    ViewBag.Title = "ArticleList";
+}
+
+<h2>ArticleList</h2>
+
+<p>
+    @Html.ActionLink("Create New", "CreateArticle")
+</p>
+<table class="table">
+    <tr>
+	    <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Content)
+        </th>
+	    <th>
+            @Html.DisplayNameFor(model => model.GoodCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BadCount)
+        </th>
+	    <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+	    <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Content)
+        </td>
+	    <td>
+            @Html.DisplayFor(modelItem => item.GoodCount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BadCount)
+        </td>
+	    <td>
+            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Details", "ArticleEdit", new { id=item.ArticleId  }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>
+    </tr>
+}
+
+</table>
