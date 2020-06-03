@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MVC.Blog.Site.Views.Article
 {
+    /// <summary>
+    /// 创建文章视图模型
+    /// </summary>
     public class CreateArticleViewModel
     {
         [Required]

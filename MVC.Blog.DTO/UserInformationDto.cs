@@ -2,6 +2,9 @@
 
 namespace MVC.Blog.DTO
 {
+    /// <summary>
+    /// 用户信息
+    /// </summary>
     public class UserInformationDto
     {
         public Guid Id { get; set; }

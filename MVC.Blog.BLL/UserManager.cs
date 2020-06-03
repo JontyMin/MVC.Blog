@@ -12,7 +12,13 @@ namespace MVC.Blog.BLL
 {
     public class UserManager : IUserManager
     {
-       
+       /// <summary>
+       /// 更改密码
+       /// </summary>
+       /// <param name="email">邮箱</param>
+       /// <param name="oldPwd">旧密码</param>
+       /// <param name="newPwd">新密码</param>
+       /// <returns></returns>
         public async Task ChangePassword(string email, string oldPwd, string newPwd)
         {
             using (IUserService userService= new UserService())
@@ -25,7 +31,13 @@ namespace MVC.Blog.BLL
                 }
             }
         }
-
+        /// <summary>
+        /// 更新用户信息
+        /// </summary>
+        /// <param name="email">邮箱</param>
+        /// <param name="siteName">网站名</param>
+        /// <param name="imagePath">头像</param>
+        /// <returns></returns>
         public async Task ChangeUserInformation(string email, string siteName, string imagePath)
         {
             using (IUserService userService = new UserService())
@@ -34,12 +46,13 @@ namespace MVC.Blog.BLL
                 user.SiteName = siteName;
                 user.ImagePath = imagePath;
                 await userService.EditAsync(user);
-
-
-
             }
         }
-
+        /// <summary>
+        /// 根据邮箱获取用户
+        /// </summary>
+        /// <param name="email">邮箱</param>
+        /// <returns></returns>
         public async Task<UserInformationDto> GetUserByEmail(string email)
         {
             using (IUserService userService = new UserService())
@@ -63,7 +76,13 @@ namespace MVC.Blog.BLL
                 }
             }
         }
-
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <param name="email">邮箱</param>
+        /// <param name="password">密码</param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public bool Login(string email, string password,out Guid userId)
         {
             using (IUserService userService=new UserService())
@@ -80,7 +99,12 @@ namespace MVC.Blog.BLL
                 return true;
             }
         }
-
+        /// <summary>
+        /// 注册
+        /// </summary>
+        /// <param name="email">邮箱</param>
+        /// <param name="password">密码</param>
+        /// <returns></returns>
         public async Task Register(string email, string password)
         {
             using (IUserService userService=new UserService())

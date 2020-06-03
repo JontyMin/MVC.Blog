@@ -11,6 +11,9 @@ using MVC.Blog.Site.Fliters;
 using MVC.Blog.Site.Models;
 namespace MVC.Blog.Site.Controllers
 {
+    /// <summary>
+    /// 主页
+    /// </summary>
     public class HomeController : Controller
     {
         
@@ -19,7 +22,10 @@ namespace MVC.Blog.Site.Controllers
         {
             return View();
         }
-
+        /// <summary>
+        /// 注册
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Register()
         {
@@ -32,11 +38,12 @@ namespace MVC.Blog.Site.Controllers
             IUserManager userManager = new UserManager();
             await userManager.Register(model.Email, model.Password);
             return Content("注册成功");
-            
-
-            
         }
 
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Login()
         {
@@ -52,8 +59,9 @@ namespace MVC.Blog.Site.Controllers
                 Guid userId;
                 if ( userManager.Login(model.LoginName, model.LoginPwd,out userId))
                 {
-                    if (model.RememberMe)
+                    if (model.RememberMe)//记住我
                     {
+                        //cookie
                         Response.Cookies.Add(new HttpCookie("loginName")
                         {
                             Value = model.LoginName,
@@ -67,6 +75,7 @@ namespace MVC.Blog.Site.Controllers
                     }
                     else
                     {
+                        //session
                         Session["loginName"] = model.LoginName;
                         Session["userId"] = userId;
                     }

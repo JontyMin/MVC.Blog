@@ -14,6 +14,14 @@ namespace MVC.Blog.BLL
 {
     public class ArticleManager:IArticleManager
     {
+        /// <summary>
+        /// 创建文章
+        /// </summary>
+        /// <param name="title">标题</param>
+        /// <param name="content">内容</param>
+        /// <param name="categoryIds">所属栏目</param>
+        /// <param name="userId">创建用户</param>
+        /// <returns></returns>
         public async Task CreateArticle(string title, string content, Guid[] categoryIds, Guid userId)
         {
             using (var articleService = new ArticleService())
@@ -30,6 +38,7 @@ namespace MVC.Blog.BLL
 
                 using (var articleToCategoryService = new ArticleToCategoryService())
                 {
+                    //遍历栏目
                     foreach (var categoryId in categoryIds)
                     {
                         await articleToCategoryService.CreateAsync(new ArticleToCategory()
@@ -43,7 +52,12 @@ namespace MVC.Blog.BLL
                 }
             }
         }
-
+        /// <summary>
+        /// 创建栏目
+        /// </summary>
+        /// <param name="name">栏目名</param>
+        /// <param name="userId">用户</param>
+        /// <returns></returns>
         public async Task CreateCategory(string name, Guid userId)
         {
             using (var categoryService = new CategoryService())
@@ -55,7 +69,11 @@ namespace MVC.Blog.BLL
                 });
             }
         }
-
+        /// <summary>
+        /// 根据用户获取所有栏目
+        /// </summary>
+        /// <param name="userId">用户编号</param>
+        /// <returns></returns>
         public async Task<List<CategoryDto>> GetAllCategories(Guid userId)
         {
             using (ICategoryService categoryService = new CategoryService())
@@ -67,12 +85,18 @@ namespace MVC.Blog.BLL
                 }).ToListAsync();
             }
         }
-
-        public async Task<List<ArticleDto>> GetAllArticles(Guid userId)
+        /// <summary>
+        /// 根据用户获取所有文章并分页
+        /// </summary>
+        /// <param name="userId">用户编号</param>
+        /// <param name="pageIndex">页码</param>
+        /// <param name="pageSize">页大小</param>
+        /// <returns></returns>
+        public async Task<List<ArticleDto>> GetAllArticles(Guid userId,int pageIndex,int pageSize)
         {
             using (var articleService=new ArticleService())
             {
-                var list = await articleService.GetAll().Include(x=>x.User).Where(x => x.UserId == userId)
+                var list = await articleService.GetAllByPageOrder(pageSize, pageIndex, asc:false).Include(x=>x.User).Where(x => x.UserId == userId)
                     .Select(x=>new ArticleDto()
                 {
                     Title = x.Title,
@@ -99,36 +123,81 @@ namespace MVC.Blog.BLL
             }
         }
 
+        /// <summary>
+        /// 获取用户文章数量
+        /// </summary>
+        /// <param name="userId">用户编号</param>
+        /// <returns></returns>
+        public async Task<int> GetDataCount(Guid userId)
+        {
+            using (IArticleService articleService = new ArticleService())
+            {
+                return await articleService.GetAll().Where(x => x.UserId == userId).CountAsync();
+            }
+        }
+        /// <summary>
+        /// 根据邮箱获取文章
+        /// </summary>
+        /// <param name="email">邮箱</param>
+        /// <returns></returns>
         public Task<List<ArticleDto>> GetAllArticlesByEmail(string email)
         {
             throw new NotImplementedException();
         }
-
+        /// <summary>
+        /// 根据栏目获取文章
+        /// </summary>
+        /// <param name="categoryId">栏目编号</param>
+        /// <returns></returns>
         public Task<List<ArticleDto>> GetAllArticlesByCategoryId(Guid categoryId)
         {
             throw new NotImplementedException();
         }
-
+        /// <summary>
+        /// 移除文章
+        /// </summary>
+        /// <param name="name">栏目</param>
+        /// <returns></returns>
         public Task RemoveCategory(string name)
         {
             throw new NotImplementedException();
         }
-
+        /// <summary>
+        /// 更新栏目
+        /// </summary>
+        /// <param name="categoryId">栏目编号</param>
+        /// <param name="newCategoryName">新的栏目名</param>
+        /// <returns></returns>
         public Task EditCategory(Guid categoryId, string newCategoryName)
         {
             throw new NotImplementedException();
         }
- 
+        /// <summary>
+        /// 移除文章
+        /// </summary>
+        /// <param name="articleId">文章编号</param>
+        /// <returns></returns>
         public Task RemoveArticle(Guid articleId)
         {
             throw new NotImplementedException();
         }
-
+        /// <summary>
+        /// 更新文章
+        /// </summary>
+        /// <param name="articleId">文章编号</param>
+        /// <param name="title">标题</param>
+        /// <param name="content">文章内容</param>
+        /// <param name="categoryIds">所属栏目</param>
+        /// <returns></returns>
         public Task EditArticle(Guid articleId, string title, string content, Guid[] categoryIds)
         {
             throw new NotImplementedException();
         }
-
+        /// <summary>
+        /// 根据编号查找文章是否存在
+        /// </summary>
+        /// <param name="articleId">文章编号</param>
+        /// <returns></returns>
         public async Task<bool> ExistsArticle(Guid articleId)
         {
             using (IArticleService articleService=new ArticleService())
@@ -136,7 +205,11 @@ namespace MVC.Blog.BLL
                 return await articleService.GetAll().AnyAsync(x => x.Id == articleId);
             }
         }
-
+        /// <summary>
+        /// 根据编号获取文章
+        /// </summary>
+        /// <param name="articleId">文章编号</param>
+        /// <returns></returns>
         public async Task<ArticleDto> GetArticleById(Guid articleId)
         {
             using (IArticleService articleService = new ArticleService())
