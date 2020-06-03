@@ -189,9 +189,35 @@ namespace MVC.Blog.BLL
         /// <param name="content">文章内容</param>
         /// <param name="categoryIds">所属栏目</param>
         /// <returns></returns>
-        public Task EditArticle(Guid articleId, string title, string content, Guid[] categoryIds)
+        public async Task EditArticle(Guid articleId, string title, string content, Guid[] categoryIds)
         {
-            throw new NotImplementedException();
+            using (IArticleService articleService=new ArticleService())
+            {
+                var article = await articleService.GetOneByIdAsync(articleId);
+                article.Title = title;
+                article.Content = content;
+                await articleService.EditAsync(article);
+
+                using (IArticleToCategoryService articleToCategoryService = new ArticleToCategoryService())
+                {
+                    //删除原有类别
+                    foreach (var categoryId in articleToCategoryService.GetAll().Where(x=>x.ArticleId==articleId))
+                    {
+                        await articleToCategoryService.RemoveAsync(categoryId, false);
+                    }
+
+                    //添加类别
+                    foreach (var categoryId in categoryIds)
+                    {
+                        await articleToCategoryService.CreateAsync(new ArticleToCategory()
+                        {
+                            ArticleId = articleId,
+                            CategoryId = categoryId
+                        }, false);
+                    }
+                    await articleToCategoryService.Save();
+                }
+            }
         }
         /// <summary>
         /// 根据编号查找文章是否存在
@@ -238,5 +264,63 @@ namespace MVC.Blog.BLL
                 }
             }
         }
+        /// <summary>
+        /// 点赞
+        /// </summary>
+        /// <param name="articleId"></param>
+        /// <returns></returns>
+        public async Task GoodCount(Guid articleId)
+        {
+            using (IArticleService articleService = new ArticleService())
+            {
+               var article =  await articleService.GetOneByIdAsync(articleId);
+               article.GoodCount++;
+               await articleService.EditAsync(article);
+            }
+        }
+        /// <summary>
+        /// 反对
+        /// </summary>
+        /// <param name="articleId"></param>
+        /// <returns></returns>
+        public async Task BadCount(Guid articleId)
+        {
+            using (IArticleService articleService = new ArticleService())
+            {
+                var article = await articleService.GetOneByIdAsync(articleId);
+                article.BadCount++;
+                await articleService.EditAsync(article);
+            }
+        }
+        public async Task CreateComment(Guid userId, Guid articleId, string content)
+        {
+            using (ICommentService commentService = new CommentService())
+            {
+                await commentService.CreateAsync(new Comment()
+                {
+                    UserId = userId,
+                    ArticleId = articleId,
+                    Content = content
+                });
+            }
+        }
+
+        public async Task<List<CommentDto>> GetCommentByArticleId(Guid articleId)
+        {
+            using (ICommentService commentService = new CommentService())
+            {
+                return await commentService.GetAll().Where(x => x.ArticleId == articleId).Include(x => x.User)
+                    .Select(x => new CommentDto()
+                    {
+                        Id = x.Id,
+                        ArticleId = x.ArticleId,
+                        Email = x.User.Email,
+                        Content = x.Content,
+                        CreateTime = x.CreateTime
+                    }).ToListAsync();
+            }
+        }
+
+       
     }
 }

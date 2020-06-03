@@ -1,7 +1,8 @@
-﻿@model MVC.Blog.DTO.ArticleDto
+﻿@using MVC.Blog.DTO
+@model MVC.Blog.DTO.ArticleDto
 
 @{
-	ViewBag.Title = "ArticleEdit";
+	ViewBag.Title = "ArticleDetails";
 }
 
 <h2>ArticleEdit</h2>
@@ -87,9 +88,24 @@
 	</dl>
 </div>
 <p>
-	@Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+	<button onclick="btnGood()">点赞</button>
+	<button onclick="btnBad()">反对</button>
+	@Html.ActionLink("Edit", "EditArticle", new {/* id = Model.PrimaryKey */}) |
 	@Html.ActionLink("Back to List", "ArticleList")
+	<input type="text" name ="txtComment" id="txtComment" value=""/>
+	<button onclick="addComment()">添加评论</button>
 </p>
+<ul>
+	@foreach (var comment in ViewBag.Comments)
+	{
+		<li>
+			<span>@comment.Comment</span>
+			<br/>
+			<span>@comment.Email &nbsp; @comment.CreateTime</span>
+
+		</li>
+	}
+</ul>
 @section header{
 	<style>
 		.categoryIds {
@@ -99,4 +115,44 @@
 		}
 
 	</style>
+	<script>
+		var articleId = '@Model.ArticleId';
+
+		function btnGood() {
+			$.ajax({
+				url: "/Article/GoodCount",
+				data: { id: articleId },
+				type: "Post"
+			}).done(function() {
+				alert("点赞成功");
+				this.disable = true;
+			});
+		}
+
+
+		function btnBad() {
+			$.ajax({
+				url: "/Article/BadCount",
+				data: { id: articleId },
+				type: "Post"
+			}).done(function() {
+				alert("反对成功");
+				this.disable = true;
+			});
+		}
+
+		function addComment() {
+			$.ajax({
+				url: "/Article/AddComment",
+				data: {
+					id:'@Model.ArticleId',
+					Comment: document.getElementById("txtComment").value
+				},
+				type: "Post"
+			}).done(function() {
+				alert("添加成功");
+				location.reload();
+			});
+		}
+	</script>
 }

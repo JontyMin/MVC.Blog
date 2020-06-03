@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.DynamicData;
 using System.Web.Mvc;
 using MVC.Blog.BLL;
 using MVC.Blog.DTO;
@@ -101,19 +102,86 @@ namespace MVC.Blog.Site.Controllers
             return View(new PagedList<ArticleDto>(articles, pageIndex,pageSize,dataCount));//返回分页list
         }
         /// <summary>
-        /// 更新文章
+        /// 文章查看
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]  
-        public async Task<ActionResult> ArticleEdit(Guid? id)
+        public async Task<ActionResult> ArticleDetails(Guid? id)
         {
             var articleManager = new ArticleManager();
             if (id==null || !await articleManager.ExistsArticle(id.Value)) return RedirectToAction(nameof(ArticleList));
-
+            var comments = await articleManager.GetCommentByArticleId(id.Value);
+            ViewBag.Comments =comments.AsQueryable();
             return View(await articleManager.GetArticleById(id.Value));
 
         }
+        /// <summary>
+        /// 更新文章
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult> EditArticle(Guid id)
+        {
+           
+            var articleManager = new ArticleManager();
+            var data = await articleManager.GetArticleById(id);
+            var userId = Guid.Parse(Session["userId"].ToString());
+            ViewBag.CategoryIds = await new ArticleManager().GetAllCategories(userId);
+            return View(new EditArticleViewModel()
+            {
+                ArticleId = data.ArticleId,
+                Title = data.Title,
+                Content = data.Content,
+                CategoryIds = data.CategoryIds
+            });
 
+        }
+        [HttpPost]
+        public async Task<ActionResult> EditArticle(EditArticleViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                IArticleManager articleManager = new ArticleManager();
+                await articleManager.EditArticle(model.ArticleId, model.Title, model.Content, model.CategoryIds);
+                return RedirectToAction(nameof(ArticleList));
+            }
+            var userId = Guid.Parse(Session["userId"].ToString());
+            ViewBag.CategoryIds = await new ArticleManager().GetAllCategories(userId);
+            return View(model);
+        }
+        /// <summary>
+        /// 点赞
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult> GoodCount(Guid id)
+        {
+            IArticleManager articleManager = new ArticleManager();
+            await articleManager.GoodCount(id);
+            return Json(new {resule = "OK"});
+        }
+        /// <summary>
+        /// 返回
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult> BadCount(Guid id)
+        {
+            IArticleManager articleManager = new ArticleManager();
+            await articleManager.BadCount(id);
+            return Json(new { resule = "OK" });
+        }
+
+        public async Task<ActionResult> AddComment(CreateCommentViewModel model)
+        {
+            var userId = Guid.Parse(Session["userId"].ToString());
+            IArticleManager articleManager = new ArticleManager();
+            await articleManager.CreateComment(userId, model.Id, model.Content);
+            return Json(new {resule = "OK"});
+        }
     }
 }

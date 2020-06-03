@@ -51,8 +51,8 @@
 				@Html.DisplayFor(modelItem => item.BadCount)
 			</td>
 			<td>
-				@Html.ActionLink("Edit", "Edit", new {/* id=item.PrimaryKey */}) |
-				@Html.ActionLink("Details", "ArticleEdit", new { id = item.ArticleId }) |
+				@Html.ActionLink("Edit", "EditArticle", new { id=item.ArticleId }) |
+				@Html.ActionLink("Details", "ArticleDetails", new { id = item.ArticleId }) |
 				@Html.ActionLink("Delete", "Delete", new {/* id=item.PrimaryKey */})
 			</td>
 		</tr>

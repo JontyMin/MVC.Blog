@@ -98,5 +98,32 @@ namespace MVC.Blog.IBLL
         /// <param name="articleId">文章编号</param>
         /// <returns></returns>
         Task<ArticleDto> GetArticleById(Guid articleId);
+        /// <summary>
+        /// 点赞
+        /// </summary>
+        /// <param name="articleId"></param>
+        /// <returns></returns>
+        Task GoodCount(Guid articleId);
+        /// <summary>
+        /// 反对
+        /// </summary>
+        /// <param name="articleId"></param>
+        /// <returns></returns>
+        Task BadCount(Guid articleId);
+        /// <summary>
+        /// 添加评论
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="articleId"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        Task CreateComment(Guid userId, Guid articleId, string content);
+        /// <summary>
+        /// 查看评论
+        /// </summary>
+        /// <param name="articleId"></param>
+        /// <returns></returns>
+        Task<List<CommentDto>> GetCommentByArticleId(Guid articleId);
+
     }
 }
